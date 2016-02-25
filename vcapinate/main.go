@@ -37,8 +37,6 @@ func generateVCAPServices(w io.Writer, p string) {
 		os.Exit(1)
 	}
 
-	fmt.Println(config.String())
-
 	sc, err := parseSpaceConfiguration(config.String())
 	if err != nil {
 		fmt.Printf("Invalid configuration file: %s", err)
@@ -47,16 +45,14 @@ func generateVCAPServices(w io.Writer, p string) {
 
 	t := template.Must(template.New("services").Funcs(fns).Parse(serviceTemplate))
 	t.Execute(w, sc)
-
 }
 
 func main() {
 	path := flag.String("path", "", "path to configuration yaml file")
 	flag.Parse()
 	if *path == "" {
-		panic("vcapper -path=vcap.yml")
+		panic("vcapinate -path=vcap.yml")
 	}
 
-	//resolveEnv(os.Stdout, *config)
 	generateVCAPServices(os.Stdout, *path)
 }
