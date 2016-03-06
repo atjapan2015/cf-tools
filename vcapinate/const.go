@@ -1,6 +1,9 @@
 package main
 
-import "text/template"
+import (
+	"fmt"
+	"text/template"
+)
 
 const (
 	serviceTemplate = `
@@ -12,9 +15,7 @@ const (
   {{ end -}}
     {
     "credentials": {
-    {{ range $k, $v := $e.Credentials -}}
-     "{{ $k }}": "{{ $v }}"{{if lastKey $k $e.Credentials}},{{ end }}
-    {{ end -}}
+		{{ print (convertCredentialsToString $e.Credentials) }}
     },
     "label": "user-provided",
     "name": "{{ $e.Name }}",
@@ -28,11 +29,17 @@ const (
 )
 
 var fns = template.FuncMap{
-	"lastKey": func(key string, a map[interface{}]interface{}) bool {
-		var last string
-		for k := range a {
-			last = k.(string)
+	"convertCredentialsToString": func(c map[interface{}]interface{}) (out string) {
+		l := len(c)
+		i := 0
+		out = ""
+		for k, v := range c {
+			out += fmt.Sprintf("%q:%q", k.(string), v.(string))
+			i++
+			if i < l {
+				out += ", "
+			}
 		}
-		return key != last
+		return
 	},
 }
