@@ -25,6 +25,12 @@ func GetVCAPServiceProperty(serviceName string, propertyName string, appEnv *cfe
 }
 
 func getVCAPService(serviceName string, appEnv *cfenv.App) (service *cfenv.Service, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("Error retrieving VCAP Service %v", r)
+		}
+	}()
+
 	service, err = appEnv.Services.WithName(serviceName)
 	return
 }
