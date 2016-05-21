@@ -30,3 +30,19 @@ func TestGetVCAPServiceProperty(t *testing.T) {
 		t.Errorf("Expected property to equal %s, got %s instead.", expectedValue, propertyValue)
 	}
 }
+
+func TestNoVCAPDoesNotPanic(t *testing.T) {
+	noVCAP := []string{}
+
+	testEnv := cfenv.Env(noVCAP)
+	cfenv, err := cfenv.New(testEnv)
+
+	if err == nil {
+		t.Error("err should not be nil if VCAP is not present")
+	}
+
+	_, err = GetVCAPServiceProperty("beer", "target-url", cfenv)
+	if err == nil {
+		t.Error("GetVCAPServiceProperty should return error if no valid VCAP present")
+	}
+}
